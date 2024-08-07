@@ -13,11 +13,15 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
     "@shadcn/ui": "^0.0.4",
     "@tanstack/react-query": "^5.51.21",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^11.3.23",
     "husky": "^9.1.4",
     "lucide-react": "^0.424.0",
     "next": "14.2.5",
