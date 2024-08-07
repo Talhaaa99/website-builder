@@ -65,7 +65,7 @@ const Builder = () => {
   const addPage = () => {
     const newPage = {
       id: `page-${Date.now()}`,
-      name: 'New Page',
+      name: `Page ${pages.length + 1}`,
       elements: [],
     };
     setPages([...pages, newPage]);
@@ -108,7 +108,7 @@ const Builder = () => {
                 onClick={() => setCurrentPageId(page.id)}
                 className={`block p-2 ${page.id === currentPageId ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
               >
-                {page.id}
+                {page?.name}
               </button>
             ))}
             <button

@@ -16,8 +16,8 @@ interface Page {
 }
 
 interface BuilderContextProps {
-    pages: Array<{ id: string; elements: BuilderElement[] }>;
-    setPages: React.Dispatch<React.SetStateAction<Array<{ id: string; elements: BuilderElement[] }>>>;
+    pages: Array<Page>;
+    setPages: React.Dispatch<React.SetStateAction<Array<Page>>>;
     currentPageId: string;
     setCurrentPageId: React.Dispatch<React.SetStateAction<string>>
     selectedElement: BuilderElement | null;
@@ -29,7 +29,7 @@ interface BuilderContextProps {
 const BuilderContext = createContext<BuilderContextProps | undefined>(undefined);
 
 export const BuilderProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [pages, setPages] = useState<Array<{ id: string; elements: BuilderElement[] }>>([]);
+  const [pages, setPages] = useState<Array<Page>>([]);
   const [selectedElement, setSelectedElement] = useState<BuilderElement | null>(null);
   const [currentPageId, setCurrentPageId] = useState<string>('');
   const [isPreview, setIsPreview] = useState<boolean>(false);

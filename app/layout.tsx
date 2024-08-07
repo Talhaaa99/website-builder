@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Website Builder',
-  description: 'Built using drag and drop',
+  description: 'Built using shadcn, react-beautiful-dnd and some love',
 };
 
 export default function RootLayout({
