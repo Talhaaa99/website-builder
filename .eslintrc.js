@@ -46,6 +46,7 @@ module.exports = {
       },
     ],
     '@typescript-eslint/no-empty-object-type': ['warn'],
+    '@typescript-eslint/no-explicit-any': ['warn'],
     // React rules
     'react/jsx-fragments': ['warn', 'syntax'], // Shorthand syntax for React fragments
     'react/jsx-filename-extension': [
