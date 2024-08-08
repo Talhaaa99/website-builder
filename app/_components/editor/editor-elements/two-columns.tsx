@@ -15,7 +15,7 @@ const TwoColumns = ({ element }: Props) => {
   const { id, content, type } = element;
   const { editor, changeClickedElement, addElement } = useEditorStore();
 
-  const handleOnDrop = (e: React.DragEvent, _containerType: string) => {
+  const handleOnDrop = (e: React.DragEvent) => {
     e.stopPropagation();
     const componentType = e.dataTransfer.getData('componentType') as EditorBtns;
 
@@ -87,7 +87,7 @@ const TwoColumns = ({ element }: Props) => {
         'border-[1px] border-dashed border-slate-300': !editor.liveMode,
       })}
       id="innerContainer"
-      onDrop={(e) => handleOnDrop(e, id)}
+      onDrop={(e) => handleOnDrop(e)}
       onDragOver={handleDragOver}
       draggable={type !== '__body'}
       onClick={handleOnClickBody}
