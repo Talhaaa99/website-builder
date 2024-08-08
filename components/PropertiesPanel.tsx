@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useBuilderStore } from '@/store/builderStore';
+import { useBuilderStore } from '@/store/editorStore';
 
 const PropertiesPanel: React.FC = () => {
   const { selectedElement, updateElementProperty } = useBuilderStore();
