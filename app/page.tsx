@@ -2,16 +2,12 @@ import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import 'tailwindcss/tailwind.css';
 
-const Editor = dynamic(() => import('../components/Editor'), { ssr: false });
-const PropertiesPanel = dynamic(() => import('../components/PropertiesPanel'), {
-  ssr: false,
-});
+const MainNav = dynamic(() => import('./_components/MainNav'), { ssr: false });
 
 const Home: NextPage = () => {
   return (
-    <div className="flex">
-      <Editor />
-      <PropertiesPanel />
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-[20] overflow-hidden bg-background">
+      <MainNav />
     </div>
   );
 };

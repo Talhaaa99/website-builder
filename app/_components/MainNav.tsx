@@ -1,8 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Tooltip,
   TooltipContent,
@@ -13,7 +12,6 @@ import {
 import { DeviceTypes, useEditorStore } from '@/store/editorStore';
 import clsx from 'clsx';
 import {
-  ArrowLeftCircle,
   EyeIcon,
   Laptop,
   Redo2,
@@ -21,13 +19,10 @@ import {
   Tablet,
   Undo2,
 } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React, { FocusEventHandler, useEffect } from 'react';
-import { toast } from 'sonner';
+import React from 'react';
 
 const MainNav = () => {
-  const router = useRouter();
+  /* const router = useRouter(); */
   const {
     setPreviewMode,
     toggleLiveMode,
@@ -35,7 +30,6 @@ const MainNav = () => {
     redo,
     editor,
     setDevice,
-    loadData,
     history,
   } = useEditorStore();
 

@@ -1,4 +1,4 @@
-'use client';
+/* 'use client';
 import React from 'react';
 import { useBuilderStore } from '@/store/editorStore';
 import {
@@ -135,3 +135,4 @@ const Editor: React.FC = () => {
 };
 
 export default Editor;
+ */
