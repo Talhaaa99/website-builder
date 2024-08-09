@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-import { DeviceTypes, useEditorStore } from '@/store/editorStore';
+import { DeviceTypes, useEditorStore } from '@/zustand/editorStore';
 import clsx from 'clsx';
 import {
   Download,

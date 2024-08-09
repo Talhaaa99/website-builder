@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useEditorStore } from '@/store/editorStore';
+import { useEditorStore } from '@/zustand/editorStore';
 import clsx from 'clsx';
 import Recursive from './editor-elements/recursive';
 import { Button } from '@/components/ui/button';
@@ -17,23 +17,27 @@ const Editor = ({ liveMode }: { liveMode?: boolean }) => {
   } = useEditorStore();
 
   useEffect(() => {
-    const initialElements = [
-      {
-        id: 'element-1',
-        name: 'Main Element',
-        type: '__body',
-        styles: {},
-        content: [],
-      },
-    ];
+    const currentPage = pages.find((page) => page.id === currentPageId);
+    const bodyExists = currentPage?.elements.some((el) => el.type === '__body');
 
-    // Ensure the first page has elements on load
-    loadData(initialElements);
+    if (!bodyExists && currentPage) {
+      // loadData expects elements, not currentPageId
+      loadData([
+        { id: '__body', name: 'Body', type: '__body', styles: {}, content: [] },
+      ]);
+    }
 
     if (liveMode) {
       toggleLiveMode(!editor.liveMode);
     }
-  }, [liveMode, loadData, toggleLiveMode, editor.liveMode]);
+  }, [
+    liveMode,
+    loadData,
+    toggleLiveMode,
+    editor.liveMode,
+    pages,
+    currentPageId,
+  ]);
 
   const handleClick = () => {
     changeClickedElement(editor.selectedElement);
@@ -54,7 +58,7 @@ const Editor = ({ liveMode }: { liveMode?: boolean }) => {
   return (
     <div
       className={clsx(
-        'use-automation-zoom-in mr-[385px] h-full overflow-scroll rounded-md bg-background transition-all',
+        'use-automation-zoom-in mr-[385px] h-full items-center overflow-scroll rounded-md bg-background transition-all',
         {
           '!mr-0 !p-0': editor.previewMode === true || editor.liveMode === true,
           '!w-[850px]': editor.device === 'Tablet',

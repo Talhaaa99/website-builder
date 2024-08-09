@@ -1,4 +1,4 @@
-import { EditorElement } from '@/store/editorStore';
+import { EditorElement } from '@/zustand/editorStore';
 import React from 'react';
 import TextComponent from './text';
 import Container from './container';
@@ -17,6 +17,10 @@ const Recursive = ({ element }: Props) => {
     'and content:',
     element.content,
   );
+
+  if (element.type === '__body') {
+    console.log('Rendering __body element:', element);
+  }
 
   switch (element.type) {
     case 'text':

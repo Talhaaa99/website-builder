@@ -1,6 +1,6 @@
 // NavigationBar.tsx
 import { Button } from '@/components/ui/button';
-import { useEditorStore } from '@/store/editorStore';
+import { useEditorStore } from '@/zustand/editorStore';
 import { PlusIcon, Trash2Icon } from 'lucide-react';
 
 const PageNavigationBar = () => {

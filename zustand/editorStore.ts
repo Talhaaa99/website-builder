@@ -111,7 +111,10 @@ const initialTemplates = [
 
 export const useEditorStore = create<EditorState>((set, get) => ({
   editor: initialEditorState,
-  history: initialHistoryState,
+  history: {
+    history: [initialEditorState],
+    currentIndex: 0,
+  },
   theme: 'dark', // or 'light'
   setTheme: (theme) => set(() => ({ theme })),
   setDevice: (device) =>
@@ -129,23 +132,24 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       const updatedPages = state.pages.map((page) => {
         if (page.id === state.currentPageId) {
           const updatedElements = page.elements.map((el) => {
-            if (el.id === containerId) {
+            if (el.id === containerId && el.type === '__body') {
               const newContent = [
                 ...(el.content as EditorElement[]),
-                elementDetails,
+                { ...elementDetails }, // Add the new element to the existing content
               ];
-              console.log('Adding new element: ', elementDetails);
+
+              console.log('Updated __body content:', newContent);
               return { ...el, content: newContent };
             }
             return el;
           });
-          return { ...page, elements: updatedElements };
+
+          return { ...page, elements: updatedElements }; // Ensure only one `__body` exists
         }
         return page;
       });
 
-      console.log('Updated pages after adding element: ', updatedPages);
-
+      console.log('Final updated pages:', updatedPages);
       return { pages: updatedPages };
     }),
 
@@ -201,48 +205,30 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       };
     }),
 
-  deleteElement: (elementId) =>
+  deleteElement: (elementId: string) =>
     set((state) => {
-      console.log('Current elements before deletion: ', state.editor.elements);
-      console.log('Attempting to delete element with id: ', elementId);
-
-      const deleteAnElement = (
-        editorArray: EditorElement[],
-        elementId: string,
-      ): EditorElement[] => {
-        return editorArray.reduce((acc: EditorElement[], item) => {
-          if (item.id === elementId) {
-            console.log(`Deleting element with id: ${item.id}`);
-            return acc; // Exclude this element from the new array
-          } else if (item.content && Array.isArray(item.content)) {
-            // Recursively delete the element from nested content
-            const updatedContent = deleteAnElement(item.content, elementId);
-            acc.push({ ...item, content: updatedContent });
-          } else {
-            // No match, so keep the element
-            acc.push(item);
-          }
-          return acc;
-        }, []);
+      const deleteRecursive = (elements: EditorElement[]): EditorElement[] => {
+        return elements
+          .filter((el) => el.id !== elementId)
+          .map((el) => ({
+            ...el,
+            content: Array.isArray(el.content)
+              ? deleteRecursive(el.content as EditorElement[])
+              : el.content,
+          }));
       };
 
-      const updatedElements = deleteAnElement(state.editor.elements, elementId);
+      const updatedPages = state.pages.map((page) => {
+        if (page.id === state.currentPageId) {
+          const updatedElements = deleteRecursive(page.elements);
+          return { ...page, elements: updatedElements };
+        }
+        return page;
+      });
 
-      console.log('Updated elements after deletion: ', updatedElements);
+      console.log('Updated elements after deletion: ', updatedPages);
 
-      const updatedHistory = [
-        ...state.history.history.slice(0, state.history.currentIndex + 1),
-        { ...state.editor, elements: updatedElements },
-      ];
-
-      return {
-        editor: { ...state.editor, elements: updatedElements },
-        history: {
-          ...state.history,
-          history: updatedHistory,
-          currentIndex: updatedHistory.length - 1,
-        },
-      };
+      return { pages: updatedPages };
     }),
 
   changeClickedElement: (elementDetails) =>
@@ -299,41 +285,63 @@ export const useEditorStore = create<EditorState>((set, get) => ({
 
   loadData: (elements, pageId) =>
     set((state) => {
+      console.log('Loading data:', elements);
+
+      // Temporarily disable filtering to see if elements reappear
+      const validElements = elements; // Remove the filter temporarily
+
       const pageIndex = state.pages.findIndex(
         (page) => page.id === (pageId || state.currentPageId),
       );
       if (pageIndex > -1) {
         const newPages = [...state.pages];
-        newPages[pageIndex].elements = elements;
+        newPages[pageIndex].elements = validElements;
+
+        console.log('After loading data, updated pages:', newPages);
         return {
           pages: newPages,
         };
       }
       return {};
     }),
+
   pages: [
     {
       id: 'page-1',
       name: 'Home',
       elements: [
         {
-          id: v4(),
+          id: '__body',
           type: '__body',
           styles: {},
-          content: [initialEditorState],
+          content: [], // Start with an empty array
           name: 'body',
         },
       ],
     },
   ],
   currentPageId: 'page-1',
-  addPage: (name) =>
-    set((state) => ({
-      pages: [
-        ...state.pages,
-        { id: `page-${state.pages.length + 1}`, name, elements: [] },
-      ],
-    })),
+  addPage: (name: string) =>
+    set((state) => {
+      const newPage: Page = {
+        id: `page-${state.pages.length + 1}`,
+        name,
+        elements: [
+          {
+            id: v4(),
+            name: 'Body',
+            type: '__body',
+            styles: {},
+            content: [],
+          },
+        ],
+      };
+
+      return {
+        pages: [...state.pages, newPage],
+        currentPageId: newPage.id,
+      };
+    }),
   removePage: (id) =>
     set((state) => {
       const newPages = state.pages.filter((page) => page.id !== id);
@@ -382,7 +390,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     console.log('Template saved successfully:', newTemplate);
   },
   exportProject: () => {
-    const { html, css, js } = get().editor; // Example: get the current HTML, CSS, and JS state
+    const { html, css, js } = get().editor;
     return { html, css, js };
   },
 }));

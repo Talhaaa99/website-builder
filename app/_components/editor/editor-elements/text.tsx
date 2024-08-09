@@ -4,7 +4,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { Trash } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useEditorStore, EditorElement } from '@/store/editorStore';
+import { useEditorStore, EditorElement } from '@/zustand/editorStore';
 
 type Props = {
   element: EditorElement;

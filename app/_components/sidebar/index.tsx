@@ -7,7 +7,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { useEditorStore } from '@/store/editorStore';
+import { useEditorStore } from '@/zustand/editorStore';
 import clsx from 'clsx';
 import React from 'react';
 import TabList from './sidebar-tabs';
@@ -43,15 +43,6 @@ const Sidebar = () => {
                 <SheetDescription>Customizable Components</SheetDescription>
               </SheetHeader>
               <SettingsTab />
-            </TabsContent>
-            <TabsContent value="Components">
-              <SheetHeader className="p-6 text-left">
-                <SheetTitle>Components</SheetTitle>
-                <SheetDescription>
-                  Drag these components onto your website
-                </SheetDescription>
-              </SheetHeader>
-              <ComponentsTab />
             </TabsContent>
             <TabsContent value="Components">
               <SheetHeader className="p-6 text-left">

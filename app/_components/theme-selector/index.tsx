@@ -1,6 +1,6 @@
 // ThemeSelector.tsx
 import { Button } from '@/components/ui/button';
-import { useEditorStore } from '@/store/editorStore';
+import { useEditorStore } from '@/zustand/editorStore';
 import { MoonIcon, SunIcon } from 'lucide-react';
 
 const ThemeSelector = () => {

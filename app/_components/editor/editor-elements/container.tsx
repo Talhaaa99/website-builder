@@ -7,7 +7,7 @@ import { Trash } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Recursive from './recursive';
 import { EditorBtns, defaultStyles } from '@/lib/constants';
-import { useEditorStore, EditorElement } from '@/store/editorStore';
+import { useEditorStore, EditorElement } from '@/zustand/editorStore';
 
 type Props = { element: EditorElement };
 
@@ -24,7 +24,7 @@ const Container = ({ element }: Props) => {
       id: v4(),
       name: '',
       styles: {},
-      type: 'container',
+      type: 'container', // Default type, might be overwritten below
       content: {},
     };
 
@@ -51,25 +51,25 @@ const Container = ({ element }: Props) => {
         return; // Exit if no valid component type is found
     }
 
-    // Log before updating state
     console.log('Before drop: ', content);
 
     const updatedContent = Array.isArray(content)
       ? [...content, newElement]
       : [newElement];
+
     const updatedElement = { ...element, content: updatedContent };
 
-    // Log after creating the new element
-    console.log('New element: ', newElement);
-    console.log('Updated content: ', updatedContent);
+    // Check if we are updating the __body element
+    if (type === '__body') {
+      addElement({ ...element, content: updatedContent }, id);
+    } else {
+      // For other elements, do something else if needed
+      addElement(updatedElement, id);
+    }
 
-    // Update state with the new content
-    addElement(updatedElement, id);
-
-    // Log after updating state
     console.log('After drop, updated element: ', updatedElement);
 
-    // Optionally trigger any state updates or re-renders
+    // Trigger any state updates or re-renders if necessary
     changeClickedElement(newElement);
   };
 
@@ -129,8 +129,9 @@ const Container = ({ element }: Props) => {
         {element.name}
       </Badge>
 
-      {Array.isArray(content) &&
-        content.map((childElement) => (
+      {element.content &&
+        Array.isArray(element.content) &&
+        element.content.map((childElement) => (
           <Recursive key={childElement.id} element={childElement} />
         ))}
 

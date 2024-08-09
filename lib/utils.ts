@@ -1,4 +1,4 @@
-import { useEditorStore } from '@/store/editorStore';
+import { useEditorStore } from '@/zustand/editorStore';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { saveAs } from 'file-saver';
