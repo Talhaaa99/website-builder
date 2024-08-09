@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { Badge } from '@/components/ui/badge';
 import RecursiveElement from './recursive';
 import { EditorBtns, defaultStyles } from '@/lib/constants';
-import { useEditorStore, EditorElement } from '@/zustand/editorStore'; // Adjust the import path as necessary
+import { useEditorStore, EditorElement } from '@/store/editorStore'; // Adjust the import path as necessary
 
 type Props = {
   element: EditorElement;

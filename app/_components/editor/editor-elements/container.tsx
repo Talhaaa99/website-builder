@@ -7,7 +7,7 @@ import { Trash } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Recursive from './recursive';
 import { EditorBtns, defaultStyles } from '@/lib/constants';
-import { useEditorStore, EditorElement } from '@/zustand/editorStore';
+import { useEditorStore, EditorElement } from '@/store/editorStore';
 
 type Props = { element: EditorElement };
 

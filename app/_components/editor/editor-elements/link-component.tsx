@@ -6,7 +6,7 @@ import { Trash } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { EditorBtns } from '@/lib/constants';
-import { EditorElement, useEditorStore } from '@/zustand/editorStore';
+import { EditorElement, useEditorStore } from '@/store/editorStore';
 
 type Props = {
   element: EditorElement;

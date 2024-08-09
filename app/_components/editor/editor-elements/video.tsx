@@ -1,7 +1,7 @@
 'use client';
 import { Badge } from '@/components/ui/badge';
 import { EditorBtns } from '@/lib/constants';
-import { useEditorStore, EditorElement } from '@/zustand/editorStore';
+import { useEditorStore, EditorElement } from '@/store/editorStore';
 import clsx from 'clsx';
 import { Trash } from 'lucide-react';
 import React from 'react';

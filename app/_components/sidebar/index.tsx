@@ -7,7 +7,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { useEditorStore } from '@/zustand/editorStore';
+import { useEditorStore } from '@/store/editorStore';
 import clsx from 'clsx';
 import React from 'react';
 import TabList from './sidebar-tabs';

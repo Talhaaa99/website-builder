@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Tooltip,
@@ -9,9 +8,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-import { DeviceTypes, useEditorStore } from '@/zustand/editorStore';
+import { DeviceTypes, useEditorStore } from '@/store/editorStore';
 import clsx from 'clsx';
 import {
+  Download,
   EyeIcon,
   Laptop,
   Redo2,
@@ -20,6 +20,9 @@ import {
   Undo2,
 } from 'lucide-react';
 import React from 'react';
+import PageNavigationBar from '../page-nav';
+import ThemeSelector from '../theme-selector';
+import { exportFiles } from '@/lib/utils';
 
 const MainNav = () => {
   /* const router = useRouter(); */
@@ -174,6 +177,9 @@ const MainNav = () => {
             </TabsList>
           </Tabs>
         </aside>
+        <aside>
+          <PageNavigationBar />
+        </aside>
         <aside className="flex items-center gap-2">
           <Button
             variant={'ghost'}
@@ -201,17 +207,15 @@ const MainNav = () => {
           >
             <Redo2 />
           </Button>
-          <div className="item-center mr-4 flex flex-col">
-            <div className="flex flex-row items-center gap-4">
-              Draft
-              <Switch disabled defaultChecked={true} />
-              Publish
-            </div>
-            {/*    <span className="text-sm text-muted-foreground">
-              Last updated {funnelPageDetails.updatedAt.toLocaleDateString()}
-            </span> */}
-          </div>
-          {/*  <Button onClick={handleOnSave}>Save</Button> */}
+          <Button
+            onClick={exportFiles}
+            variant={'ghost'}
+            size={'icon'}
+            className="mr-4 hover:bg-slate-200"
+          >
+            <Download />
+          </Button>
+          <ThemeSelector />
         </aside>
       </nav>
     </TooltipProvider>

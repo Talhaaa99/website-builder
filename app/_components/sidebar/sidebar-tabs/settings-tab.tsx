@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { EditorElement, useEditorStore } from '@/zustand/editorStore'; // Adjust the path accordingly
+import { EditorElement, useEditorStore } from '@/store/editorStore'; // Adjust the path accordingly
 
 const SettingsTab = () => {
   const { editor, updateElement } = useEditorStore();

@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { useEditorStore } from '@/zustand/editorStore';
+import { useEditorStore } from '@/store/editorStore';
 import clsx from 'clsx';
 import { EyeOff } from 'lucide-react';
 import React, { useEffect } from 'react';
@@ -9,8 +9,17 @@ import Recursive from './editor-elements/recursive';
 type Props = { liveMode?: boolean };
 
 const Editor = ({ liveMode }: Props) => {
-  const { toggleLiveMode, editor, changeClickedElement, setPreviewMode } =
-    useEditorStore();
+  const {
+    toggleLiveMode,
+    editor,
+    changeClickedElement,
+    setPreviewMode,
+    pages,
+    currentPageId,
+  } = useEditorStore();
+
+  // Find the current page based on currentPageId
+  const currentPage = pages.find((page) => page.id === currentPageId);
 
   useEffect(() => {
     if (liveMode) {
@@ -26,6 +35,7 @@ const Editor = ({ liveMode }: Props) => {
     setPreviewMode(!editor.previewMode);
     toggleLiveMode(true);
   };
+
   return (
     <div
       className={clsx(
@@ -49,8 +59,11 @@ const Editor = ({ liveMode }: Props) => {
           <EyeOff />
         </Button>
       )}
-      {Array.isArray(editor.elements) &&
-        editor.elements.map((childElement) => (
+
+      {/* Render elements of the current page */}
+      {currentPage &&
+        Array.isArray(currentPage.elements) &&
+        currentPage.elements.map((childElement) => (
           <Recursive key={childElement.id} element={childElement} />
         ))}
     </div>

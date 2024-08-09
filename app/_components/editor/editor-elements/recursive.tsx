@@ -1,4 +1,4 @@
-import { EditorElement } from '@/zustand/editorStore';
+import { EditorElement } from '@/store/editorStore';
 import React from 'react';
 import TextComponent from './text';
 import Container from './container';
