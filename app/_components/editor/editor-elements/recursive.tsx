@@ -10,6 +10,14 @@ type Props = {
 };
 
 const Recursive = ({ element }: Props) => {
+  // Log to verify what's being rendered
+  console.log(
+    'Rendering element in Recursive with type: ',
+    element.type,
+    'and content:',
+    element.content,
+  );
+
   switch (element.type) {
     case 'text':
       return <TextComponent element={element} />;
@@ -17,11 +25,8 @@ const Recursive = ({ element }: Props) => {
       return <Container element={element} />;
     case 'video':
       return <VideoComponent element={element} />;
-    case '2Col':
-      return <Container element={element} />;
     case '__body':
       return <Container element={element} />;
-
     case 'link':
       return <LinkComponent element={element} />;
     default:

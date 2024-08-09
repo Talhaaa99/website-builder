@@ -45,52 +45,32 @@ const Container = ({ element }: Props) => {
         newElement.name = 'Video';
         newElement.styles = {};
         newElement.type = 'video';
-        newElement.content = {
-          src: 'https://www.youtube.com/embed/A3l6YYkXzzg?si=zbcCeWcpq7Cwf8W1',
-        };
+        newElement.content = { src: 'video-url.mp4' };
         break;
-      case 'container':
-        newElement.name = 'Container';
-        newElement.styles = { ...defaultStyles };
-        newElement.type = 'container';
-        newElement.content = [];
-        break;
-      case 'contactForm':
-        newElement.name = 'Contact Form';
-        newElement.styles = {};
-        newElement.type = 'contactForm';
-        newElement.content = [];
-        break;
-      case 'paymentForm':
-        newElement.name = 'Payment Form';
-        newElement.styles = {};
-        newElement.type = 'paymentForm';
-        newElement.content = [];
-        break;
-      case '2Col':
-        newElement.name = 'Two Columns';
-        newElement.styles = { ...defaultStyles, display: 'flex' };
-        newElement.type = '2Col';
-        newElement.content = [
-          {
-            id: v4(),
-            name: 'Container',
-            styles: { ...defaultStyles, width: '100%' },
-            type: 'container',
-            content: [],
-          },
-          {
-            id: v4(),
-            name: 'Container',
-            styles: { ...defaultStyles, width: '100%' },
-            type: 'container',
-            content: [],
-          },
-        ];
-        break;
+      default:
+        return; // Exit if no valid component type is found
     }
 
-    addElement(newElement, id);
+    // Log before updating state
+    console.log('Before drop: ', content);
+
+    const updatedContent = Array.isArray(content)
+      ? [...content, newElement]
+      : [newElement];
+    const updatedElement = { ...element, content: updatedContent };
+
+    // Log after creating the new element
+    console.log('New element: ', newElement);
+    console.log('Updated content: ', updatedContent);
+
+    // Update state with the new content
+    addElement(updatedElement, id);
+
+    // Log after updating state
+    console.log('After drop, updated element: ', updatedElement);
+
+    // Optionally trigger any state updates or re-renders
+    changeClickedElement(newElement);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -108,6 +88,8 @@ const Container = ({ element }: Props) => {
   };
 
   const handleDeleteElement = () => {
+    console.log('Deleted element id ', id);
+
     deleteElement(id);
   };
 

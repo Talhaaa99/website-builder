@@ -23,7 +23,7 @@ const Sidebar = () => {
         <SheetContent
           side="right"
           className={clsx(
-            'z-[80] mt-[97px] w-16 overflow-hidden p-0 shadow-none transition-all focus:border-none',
+            'z-[80] mt-[116px] w-16 overflow-hidden p-0 shadow-none transition-all focus:border-none',
             { hidden: editor.previewMode },
           )}
         >
@@ -32,17 +32,26 @@ const Sidebar = () => {
         <SheetContent
           side="right"
           className={clsx(
-            'z-[40] mr-16 mt-[97px] h-full w-80 overflow-hidden bg-background p-0 shadow-none transition-all',
+            'w-90 z-[80] mr-16 mt-[116px] h-full overflow-hidden bg-background p-0 shadow-none transition-all',
             { hidden: editor.previewMode },
           )}
         >
-          <div className="grid h-full gap-4 overflow-scroll pb-36">
+          <div className="grid h-screen gap-4 overflow-x-scroll pb-36">
             <TabsContent value="Settings">
               <SheetHeader className="p-6 text-left">
                 <SheetTitle>Styles</SheetTitle>
                 <SheetDescription>Customizable Components</SheetDescription>
               </SheetHeader>
               <SettingsTab />
+            </TabsContent>
+            <TabsContent value="Components">
+              <SheetHeader className="p-6 text-left">
+                <SheetTitle>Components</SheetTitle>
+                <SheetDescription>
+                  Drag these components onto your website
+                </SheetDescription>
+              </SheetHeader>
+              <ComponentsTab />
             </TabsContent>
             <TabsContent value="Components">
               <SheetHeader className="p-6 text-left">

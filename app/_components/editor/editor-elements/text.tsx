@@ -15,6 +15,7 @@ const TextComponent = ({ element }: Props) => {
     useEditorStore();
 
   const handleDeleteElement = () => {
+    console.log('Attempting to delete element with id: ', element.id);
     deleteElement(element.id);
   };
 
@@ -59,7 +60,7 @@ const TextComponent = ({ element }: Props) => {
           <Trash
             className="cursor-pointer"
             size={16}
-            onClick={handleDeleteElement}
+            onClick={() => handleDeleteElement()}
           />
         </div>
       )}

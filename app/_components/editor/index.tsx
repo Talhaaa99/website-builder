@@ -1,14 +1,11 @@
-'use client';
-import { Button } from '@/components/ui/button';
+import React, { useEffect } from 'react';
 import { useEditorStore } from '@/store/editorStore';
 import clsx from 'clsx';
-import { EyeOff } from 'lucide-react';
-import React, { useEffect } from 'react';
 import Recursive from './editor-elements/recursive';
+import { Button } from '@/components/ui/button';
+import { EyeOffIcon } from 'lucide-react';
 
-type Props = { liveMode?: boolean };
-
-const Editor = ({ liveMode }: Props) => {
+const Editor = ({ liveMode }: { liveMode?: boolean }) => {
   const {
     toggleLiveMode,
     editor,
@@ -16,16 +13,27 @@ const Editor = ({ liveMode }: Props) => {
     setPreviewMode,
     pages,
     currentPageId,
+    loadData,
   } = useEditorStore();
 
-  // Find the current page based on currentPageId
-  const currentPage = pages.find((page) => page.id === currentPageId);
-
   useEffect(() => {
+    const initialElements = [
+      {
+        id: 'element-1',
+        name: 'Main Element',
+        type: '__body',
+        styles: {},
+        content: [],
+      },
+    ];
+
+    // Ensure the first page has elements on load
+    loadData(initialElements);
+
     if (liveMode) {
       toggleLiveMode(!editor.liveMode);
     }
-  }, [liveMode]);
+  }, [liveMode, loadData, toggleLiveMode, editor.liveMode]);
 
   const handleClick = () => {
     changeClickedElement(editor.selectedElement);
@@ -33,8 +41,15 @@ const Editor = ({ liveMode }: Props) => {
 
   const handleUnpreview = () => {
     setPreviewMode(!editor.previewMode);
-    toggleLiveMode(true);
+    toggleLiveMode(!editor.liveMode);
   };
+
+  const currentPage = pages.find((page) => page.id === currentPageId);
+
+  if (!currentPage) {
+    return <div>No page available.</div>;
+  }
+  console.log('Elements in current page:', currentPage.elements);
 
   return (
     <div
@@ -53,19 +68,15 @@ const Editor = ({ liveMode }: Props) => {
         <Button
           variant={'ghost'}
           size={'icon'}
-          className="fixed left-0 top-0 z-[100] h-6 w-6 bg-slate-600 p-[2px]"
           onClick={handleUnpreview}
+          className="dark:text-white"
         >
-          <EyeOff />
+          <EyeOffIcon />
         </Button>
       )}
-
-      {/* Render elements of the current page */}
-      {currentPage &&
-        Array.isArray(currentPage.elements) &&
-        currentPage.elements.map((childElement) => (
-          <Recursive key={childElement.id} element={childElement} />
-        ))}
+      {currentPage.elements.map((element) => (
+        <Recursive key={element.id} element={element} />
+      ))}
     </div>
   );
 };

@@ -11,16 +11,16 @@ const ThemeSelector = () => {
       <Button
         variant={'ghost'}
         size={'icon'}
-        className="hover:bg-slate-200"
-        onClick={() => setTheme('light')}
+        className="hover:bg-slate-200 dark:text-white dark:hover:bg-slate-800"
+        onClick={() => setTheme('dark')}
       >
         <MoonIcon />
       </Button>
       <Button
         variant={'ghost'}
         size={'icon'}
-        className="hover:bg-slate-200"
-        onClick={() => setTheme('dark')}
+        className="hover:bg-slate-200 dark:text-white dark:hover:bg-slate-800"
+        onClick={() => setTheme('light')}
       >
         <SunIcon />
       </Button>

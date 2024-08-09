@@ -1,6 +1,6 @@
 import React from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Database, Plus, SettingsIcon, SquareStackIcon } from 'lucide-react';
+import { Plus, SettingsIcon, SquareStackIcon } from 'lucide-react';
 
 const TabList = () => {
   return (
@@ -19,16 +19,10 @@ const TabList = () => {
       </TabsTrigger>
 
       <TabsTrigger
-        value="Layers"
+        value="Templates"
         className="h-10 w-10 p-0 data-[state=active]:bg-muted"
       >
         <SquareStackIcon />
-      </TabsTrigger>
-      <TabsTrigger
-        value="Media"
-        className="h-10 w-10 p-0 data-[state=active]:bg-muted"
-      >
-        <Database />
       </TabsTrigger>
     </TabsList>
   );

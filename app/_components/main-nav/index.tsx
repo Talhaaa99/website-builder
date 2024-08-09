@@ -106,7 +106,7 @@ const MainNav = () => {
     <TooltipProvider>
       <nav
         className={clsx(
-          'flex items-center justify-between gap-2 border-b-[1px] p-6 transition-all',
+          'flex items-center justify-between gap-2 border-b-[1px] p-4 transition-all',
           { '!h-0 !overflow-hidden !p-0': editor.previewMode },
         )}
       >
@@ -184,7 +184,7 @@ const MainNav = () => {
           <Button
             variant={'ghost'}
             size={'icon'}
-            className="hover:bg-slate-800"
+            className="hover:bg-slate-800 dark:text-white"
             onClick={handlePreviewClick}
           >
             <EyeIcon />
@@ -194,7 +194,7 @@ const MainNav = () => {
             onClick={handleUndo}
             variant={'ghost'}
             size={'icon'}
-            className="hover:bg-slate-800"
+            className="hover:bg-slate-200 dark:text-white"
           >
             <Undo2 />
           </Button>
@@ -203,7 +203,7 @@ const MainNav = () => {
             onClick={handleRedo}
             variant={'ghost'}
             size={'icon'}
-            className="mr-4 hover:bg-slate-800"
+            className="mr-4 hover:bg-slate-200 dark:text-white"
           >
             <Redo2 />
           </Button>
@@ -211,7 +211,7 @@ const MainNav = () => {
             onClick={exportFiles}
             variant={'ghost'}
             size={'icon'}
-            className="mr-4 hover:bg-slate-200"
+            className="mr-4 hover:bg-slate-200 dark:text-white dark:hover:bg-slate-800"
           >
             <Download />
           </Button>
