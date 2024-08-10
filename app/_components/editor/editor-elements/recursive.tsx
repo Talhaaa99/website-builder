@@ -10,14 +10,6 @@ type Props = {
 };
 
 const Recursive = ({ element }: Props) => {
-  // Log to verify what's being rendered
-  console.log(
-    'Rendering element in Recursive with type: ',
-    element.type,
-    'and content:',
-    element.content,
-  );
-
   if (element.type === '__body') {
     console.log('Rendering __body element:', element);
   }

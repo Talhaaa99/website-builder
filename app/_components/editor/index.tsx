@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useEditorStore } from '@/zustand/editorStore';
 import clsx from 'clsx';
-import Recursive from './editor-elements/recursive';
+import Container from './editor-elements/container';
 import { Button } from '@/components/ui/button';
 import { EyeOffIcon } from 'lucide-react';
 
@@ -18,13 +18,25 @@ const Editor = ({ liveMode }: { liveMode?: boolean }) => {
 
   useEffect(() => {
     const currentPage = pages.find((page) => page.id === currentPageId);
-    const bodyExists = currentPage?.elements.some((el) => el.type === '__body');
+    const currentEditor = currentPage?.elements[0]; // Assuming each page has one Editor instance
+
+    const bodyExists = currentEditor?.elements.some(
+      (el) => el.type === '__body',
+    );
 
     if (!bodyExists && currentPage) {
-      // loadData expects elements, not currentPageId
-      loadData([
-        { id: '__body', name: 'Body', type: '__body', styles: {}, content: [] },
-      ]);
+      loadData(
+        [
+          {
+            id: '__body',
+            name: 'Body',
+            type: '__body',
+            styles: {},
+            content: [],
+          },
+        ],
+        currentPageId,
+      );
     }
 
     if (liveMode) {
@@ -51,11 +63,11 @@ const Editor = ({ liveMode }: { liveMode?: boolean }) => {
   };
 
   const currentPage = pages.find((page) => page.id === currentPageId);
+  const currentEditor = currentPage?.elements[0]; // Access the first (and only) editor in the page
 
-  if (!currentPage) {
-    return <div>No page available.</div>;
+  if (!currentPage || !currentEditor) {
+    return <div>No page or editor available.</div>;
   }
-  console.log('Elements in current page:', currentPage.elements);
 
   return (
     <div
@@ -80,8 +92,8 @@ const Editor = ({ liveMode }: { liveMode?: boolean }) => {
           <EyeOffIcon />
         </Button>
       )}
-      {currentPage.elements.map((element) => (
-        <Recursive key={element.id} element={element} />
+      {currentEditor.elements.map((element) => (
+        <Container key={element.id} element={element} />
       ))}
     </div>
   );

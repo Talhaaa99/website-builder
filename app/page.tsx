@@ -1,10 +1,8 @@
 'use client';
 import { NextPage } from 'next';
-import dynamic from 'next/dynamic';
 import Sidebar from './_components/sidebar';
-
-const MainNav = dynamic(() => import('./_components/main-nav'), { ssr: false });
-const Editor = dynamic(() => import('./_components/editor'), { ssr: false });
+import Editor from './_components/editor';
+import MainNav from './_components/main-nav';
 
 const Home: NextPage = () => {
   return (

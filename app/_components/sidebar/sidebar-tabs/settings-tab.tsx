@@ -8,8 +8,8 @@ import {
 } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useEditorStore } from '@/zustand/editorStore';
-/* import { Slider } from '@/components/ui/slider';
+import { EditorElement, useEditorStore } from '@/zustand/editorStore';
+import { Slider } from '@/components/ui/slider';
 import {
   Select,
   SelectContent,
@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Tabs, TabsTrigger, TabsList } from '@/components/ui/tabs'; */
+import { Tabs, TabsTrigger, TabsList } from '@/components/ui/tabs';
 
 const SettingsTab = () => {
   const { editor, updateElement } = useEditorStore();
@@ -36,9 +36,7 @@ const SettingsTab = () => {
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { id, value } = e.target;
-    updateElement({
-      content: { ...selectedElement?.content, [id]: value },
-    });
+    updateElement({ content: { ...selectedElement?.content, [id]: value } });
   };
 
   if (!selectedElement) {
@@ -51,7 +49,7 @@ const SettingsTab = () => {
       className="w-full"
       defaultValue={['Typography', 'Dimensions', 'Decorations', 'Flexbox']}
     >
-      {/* Custom settings for links */}
+      {/* Link settings */}
       {selectedElement.type === 'link' && (
         <AccordionItem value="Custom" className="px-6 py-0">
           <AccordionTrigger className="!no-underline">
@@ -71,7 +69,7 @@ const SettingsTab = () => {
         </AccordionItem>
       )}
 
-      {/* Typography settings */}
+      {/* Text settings */}
       {selectedElement.type === 'text' && (
         <AccordionItem value="Typography" className="border-y-[1px] px-6 py-0">
           <AccordionTrigger className="!no-underline">
@@ -96,13 +94,60 @@ const SettingsTab = () => {
                 placeholder="e.g., #000000"
               />
             </div>
-            {/* Additional typography settings as needed */}
           </AccordionContent>
         </AccordionItem>
       )}
 
-      {/* Similar settings sections for containers, videos, etc. */}
-      {/* You can create more accordions for each type of element and show relevant settings */}
+      {/* Video settings */}
+      {selectedElement.type === 'video' && (
+        <AccordionItem value="Video" className="px-6 py-0">
+          <AccordionTrigger className="!no-underline">
+            Video Settings
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-col gap-2">
+              <Label className="text-muted-foreground">Video URL</Label>
+              <Input
+                id="src"
+                placeholder="https://example.com/video.mp4"
+                onChange={handleCustomPropertyChange}
+                value={(selectedElement.content as { src: string }).src || ''}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      )}
+
+      {/* Container settings */}
+      {selectedElement.type === 'container' && (
+        <AccordionItem value="Container" className="px-6 py-0">
+          <AccordionTrigger className="!no-underline">
+            Container Settings
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-col gap-2">
+              <Label className="text-muted-foreground">Background Color</Label>
+              <Input
+                id="backgroundColor"
+                placeholder="e.g., #ffffff"
+                onChange={handleOnChanges}
+                value={selectedElement.styles.backgroundColor || ''}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label className="text-muted-foreground">Padding</Label>
+              <Input
+                id="padding"
+                placeholder="e.g., 20px"
+                onChange={handleOnChanges}
+                value={selectedElement.styles.padding || ''}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      )}
+
+      {/* Add similar settings for 2Col, etc. */}
     </Accordion>
   );
 };

@@ -19,6 +19,7 @@ export type EditorElement = {
 };
 
 export type Editor = {
+  id: string;
   liveMode: boolean;
   elements: EditorElement[];
   selectedElement: EditorElement | null;
@@ -37,20 +38,19 @@ export type HistoryState = {
 export type Page = {
   id: string;
   name: string;
-  elements: EditorElement[];
+  elements: Editor[];
 };
 
 export type Templates = {
   id: string;
   name: string;
   pages: Page[];
-  elements: EditorElement[];
 };
 
 export type EditorState = {
   editor: Editor;
   history: HistoryState;
-  theme: 'light' | 'dark'; // Theme can only be 'light' or 'dark'
+  theme: 'light' | 'dark';
   setTheme: (theme: 'light' | 'dark') => void;
   setDevice: (device: DeviceTypes) => void;
   setPreviewMode: (previewMode: boolean) => void;
@@ -60,7 +60,7 @@ export type EditorState = {
   toggleLiveMode: (value?: boolean) => void;
   redo: () => void;
   undo: () => void;
-  loadData: (elements: EditorElement[], withLive?: boolean) => void;
+  loadData: (elements: EditorElement[], pageId?: string) => void;
   pages: Page[];
   currentPageId: string;
   addPage: (name: string) => void;
@@ -74,6 +74,7 @@ export type EditorState = {
 };
 
 const initialEditorState: EditorState['editor'] = {
+  id: v4(),
   elements: [
     {
       content: [],
@@ -83,13 +84,7 @@ const initialEditorState: EditorState['editor'] = {
       type: '__body',
     },
   ],
-  selectedElement: {
-    id: '',
-    content: [],
-    name: '',
-    styles: {},
-    type: null,
-  },
+  selectedElement: null,
   device: 'Desktop',
   previewMode: false,
   liveMode: false,
@@ -109,7 +104,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     history: [initialEditorState],
     currentIndex: 0,
   },
-  theme: 'dark', // or 'light'
+  theme: 'dark',
   setTheme: (theme) => set(() => ({ theme })),
   setDevice: (device) =>
     set((state) => ({
@@ -125,19 +120,29 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     set((state) => {
       const updatedPages = state.pages.map((page) => {
         if (page.id === state.currentPageId) {
-          const updatedElements = page.elements.map((el) => {
-            if (el.id === containerId && el.type === '__body') {
-              // Only update the content of the existing __body component
-              const newContent = [
-                ...(el.content as EditorElement[]),
-                { ...elementDetails },
-              ];
-              return { ...el, content: newContent };
-            }
-            return el;
+          const updatedEditors = page.elements.map((editor) => {
+            const updatedElements = editor.elements.map((el) => {
+              if (el.id === containerId && el.type === '__body') {
+                // Append the new element to the existing content array
+                const newContent = [
+                  ...(el.content as EditorElement[]),
+                  { ...elementDetails },
+                ];
+                return { ...el, content: newContent };
+              }
+              return el;
+            });
+
+            return {
+              ...editor,
+              elements: updatedElements, // Return the updated editor with new elements
+            };
           });
 
-          return { ...page, elements: updatedElements };
+          return {
+            ...page,
+            elements: updatedEditors, // Update the page with the modified editor
+          };
         }
         return page;
       });
@@ -161,13 +166,18 @@ export const useEditorStore = create<EditorState>((set, get) => ({
 
       const updatedPages = state.pages.map((page) => {
         if (page.id === state.currentPageId) {
-          const updatedElements = deleteRecursive(page.elements);
-          return { ...page, elements: updatedElements };
+          const updatedEditors = page.elements.map((editor) => {
+            const updatedElements = deleteRecursive(editor.elements);
+            return {
+              ...editor,
+              elements: updatedElements,
+            };
+          });
+
+          return { ...page, elements: updatedEditors };
         }
         return page;
       });
-
-      console.log('Updated elements after deletion: ', updatedPages);
 
       return { pages: updatedPages };
     }),
@@ -192,7 +202,6 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       ...updatedElement,
     };
 
-    // Update the selected element in the editor state
     set({
       editor: {
         ...state.editor,
@@ -200,7 +209,6 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       },
     });
 
-    // Update the element in the main elements array
     get().updateElementInPage(updatedSelectedElement);
   },
 
@@ -208,9 +216,21 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     const state = get();
     const updatedPages = state.pages.map((page) => {
       if (page.id === state.currentPageId) {
+        const updatedEditors = page.elements.map((editor) => {
+          const updatedElements = updateElementsRecursive(
+            editor.elements,
+            updatedElement,
+          );
+
+          return {
+            ...editor,
+            elements: updatedElements,
+          };
+        });
+
         return {
           ...page,
-          elements: updateElementsRecursive(page.elements, updatedElement),
+          elements: updatedEditors,
         };
       }
       return page;
@@ -251,27 +271,27 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       return state;
     }),
 
-  loadData: (elements, pageId) =>
+  loadData: (elements, pageId) => {
     set((state) => {
-      console.log('Loading data:', elements);
-
-      // Temporarily disable filtering to see if elements reappear
-      const validElements = elements; // Remove the filter temporarily
-
       const pageIndex = state.pages.findIndex(
         (page) => page.id === (pageId || state.currentPageId),
       );
       if (pageIndex > -1) {
         const newPages = [...state.pages];
-        newPages[pageIndex].elements = validElements;
+        newPages[pageIndex].elements = [
+          {
+            ...newPages[pageIndex].elements[0],
+            elements,
+          },
+        ];
 
-        console.log('After loading data, updated pages:', newPages);
         return {
           pages: newPages,
         };
       }
       return {};
-    }),
+    });
+  },
 
   pages: [
     {
@@ -279,11 +299,23 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       name: 'Home',
       elements: [
         {
-          id: '__body',
-          type: '__body',
-          styles: {},
-          content: [], // Start with an empty array
-          name: 'body',
+          id: v4(),
+          elements: [
+            {
+              id: '__body',
+              type: '__body',
+              styles: {},
+              content: [],
+              name: 'Body',
+            },
+          ],
+          liveMode: false,
+          selectedElement: null,
+          device: 'Desktop',
+          previewMode: false,
+          html: '',
+          css: '',
+          js: '',
         },
       ],
     },
@@ -297,10 +329,22 @@ export const useEditorStore = create<EditorState>((set, get) => ({
         elements: [
           {
             id: v4(),
-            name: 'Body',
-            type: '__body',
-            styles: {},
-            content: [],
+            elements: [
+              {
+                id: '__body',
+                type: '__body',
+                styles: {},
+                content: [],
+                name: 'Body',
+              },
+            ],
+            liveMode: false,
+            selectedElement: null,
+            device: 'Desktop',
+            previewMode: false,
+            html: '',
+            css: '',
+            js: '',
           },
         ],
       };
@@ -329,15 +373,27 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     set((state) => {
       const template = initialTemplates.find((t) => t.id === templateId);
       if (template) {
-        // Ensure that pages and currentPageId are updated
         return {
-          ...state,
-          pages: template.pages, // Setting the template's pages to the store
-          currentPageId: template.pages[0].id, // Set the currentPageId to the first page
+          pages: template.pages.map((page) => ({
+            id: page.id,
+            name: page.name,
+            elements: page.elements.map((editor) => ({
+              ...editor,
+              elements: editor.elements.map((element) => ({
+                ...element,
+                content: Array.isArray(element.content)
+                  ? element.content.map((contentElement) => ({
+                      ...contentElement,
+                    }))
+                  : element.content,
+              })),
+            })),
+          })),
+          currentPageId: template.pages[0].id,
         };
       } else {
         console.warn(`Template with id ${templateId} not found`);
-        return {}; // Return the current state if the template isn't found
+        return state;
       }
     }),
 
@@ -353,10 +409,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
         localStorage.getItem('templates') || '[]',
       );
 
-      // Add the new template to the existing templates
       const updatedTemplates = [...existingTemplates, newTemplate];
 
-      // Save the updated templates array back to local storage
       localStorage.setItem('templates', JSON.stringify(updatedTemplates));
 
       console.log('Template saved successfully:', newTemplate);

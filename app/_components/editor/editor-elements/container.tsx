@@ -3,29 +3,30 @@
 import React from 'react';
 import clsx from 'clsx';
 import { v4 } from 'uuid';
-import { Trash } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import Recursive from './recursive';
 import { EditorBtns, defaultStyles } from '@/lib/constants';
 import { useEditorStore, EditorElement } from '@/zustand/editorStore';
+import TextComponent from './text';
+import VideoComponent from './video';
+import LinkComponent from './link-component';
 
 type Props = { element: EditorElement };
 
 const Container = ({ element }: Props) => {
   const { id, content, styles, type } = element;
-  const { editor, addElement, changeClickedElement, deleteElement } =
-    useEditorStore();
+  const { addElement, changeClickedElement } = useEditorStore();
 
   const handleOnDrop = (e: React.DragEvent) => {
+    e.preventDefault();
     e.stopPropagation();
+
     const componentType = e.dataTransfer.getData('componentType') as EditorBtns;
 
     const newElement: EditorElement = {
       id: v4(),
       name: '',
       styles: {},
-      type: 'container', // Default type, might be overwritten below
-      content: {},
+      type: 'container',
+      content: [],
     };
 
     switch (componentType) {
@@ -48,49 +49,20 @@ const Container = ({ element }: Props) => {
         newElement.content = { src: 'video-url.mp4' };
         break;
       default:
-        return; // Exit if no valid component type is found
+        return;
     }
 
-    console.log('Before drop: ', content);
-
-    const updatedContent = Array.isArray(content)
-      ? [...content, newElement]
-      : [newElement];
-
-    const updatedElement = { ...element, content: updatedContent };
-
-    // Check if we are updating the __body element
-    if (type === '__body') {
-      addElement({ ...element, content: updatedContent }, id);
-    } else {
-      // For other elements, do something else if needed
-      addElement(updatedElement, id);
-    }
-
-    console.log('After drop, updated element: ', updatedElement);
-
-    // Trigger any state updates or re-renders if necessary
-    changeClickedElement(newElement);
+    // Add the new element to the existing content array
+    addElement(newElement, id);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
 
-  const handleDragStart = (e: React.DragEvent) => {
-    if (type === '__body') return;
-    e.dataTransfer.setData('componentType', 'container');
-  };
-
   const handleOnClickBody = (e: React.MouseEvent) => {
     e.stopPropagation();
     changeClickedElement(element);
-  };
-
-  const handleDeleteElement = () => {
-    console.log('Deleted element id ', id);
-
-    deleteElement(id);
   };
 
   return (
@@ -101,47 +73,32 @@ const Container = ({ element }: Props) => {
         'h-fit': type === 'container',
         'h-full overflow-scroll': type === '__body',
         'flex flex-col md:!flex-row': type === '2Col',
-        '!border-blue-500':
-          editor?.selectedElement?.id === id &&
-          !editor.liveMode &&
-          editor?.selectedElement.type !== '__body',
-        '!border-4 !border-yellow-400':
-          editor?.selectedElement?.id === id &&
-          !editor.liveMode &&
-          editor?.selectedElement.type === '__body',
-        '!border-solid': editor?.selectedElement?.id === id && !editor.liveMode,
-        'border-[1px] border-dashed border-slate-300': !editor.liveMode,
       })}
       onDrop={handleOnDrop}
       onDragOver={handleDragOver}
-      draggable={type !== '__body'}
       onClick={handleOnClickBody}
-      onDragStart={handleDragStart}
     >
-      <Badge
-        className={clsx(
-          'absolute -left-[1px] -top-[23px] hidden rounded-none rounded-t-lg',
-          {
-            block: editor?.selectedElement?.id === id && !editor.liveMode,
-          },
-        )}
-      >
-        {element.name}
-      </Badge>
-
-      {element.content &&
-        Array.isArray(element.content) &&
-        element.content.map((childElement) => (
-          <Recursive key={childElement.id} element={childElement} />
-        ))}
-
-      {editor?.selectedElement?.id === id &&
-        !editor.liveMode &&
-        editor.selectedElement.type !== '__body' && (
-          <div className="absolute -right-[1px] -top-[25px] rounded-none rounded-t-lg bg-primary px-2.5 py-1 text-xs font-bold">
-            <Trash size={16} onClick={handleDeleteElement} />
-          </div>
-        )}
+      {Array.isArray(content) &&
+        content.map((childElement) => {
+          switch (childElement.type) {
+            case 'text':
+              return (
+                <TextComponent key={childElement.id} element={childElement} />
+              );
+            case 'container':
+              return <Container key={childElement.id} element={childElement} />;
+            case 'video':
+              return (
+                <VideoComponent key={childElement.id} element={childElement} />
+              );
+            case 'link':
+              return (
+                <LinkComponent key={childElement.id} element={childElement} />
+              );
+            default:
+              return null;
+          }
+        })}
     </div>
   );
 };
