@@ -81,9 +81,9 @@ const TwoColumns = ({ element }: Props) => {
         'h-full': type === '__body',
         'm-4': type === 'container',
         '!border-blue-500':
-          editor.selectedElement.id === element.id && !editor.liveMode,
+          editor?.selectedElement?.id === element.id && !editor.liveMode,
         '!border-solid':
-          editor.selectedElement.id === element.id && !editor.liveMode,
+          editor?.selectedElement?.id === element.id && !editor.liveMode,
         'border-[1px] border-dashed border-slate-300': !editor.liveMode,
       })}
       id="innerContainer"
@@ -93,7 +93,7 @@ const TwoColumns = ({ element }: Props) => {
       onClick={handleOnClickBody}
       onDragStart={(e) => handleDragStart(e, 'container')}
     >
-      {editor.selectedElement.id === element.id && !editor.liveMode && (
+      {editor?.selectedElement?.id === element.id && !editor.liveMode && (
         <Badge className="absolute -left-[1px] -top-[23px] rounded-none rounded-t-lg">
           {editor.selectedElement.name}
         </Badge>

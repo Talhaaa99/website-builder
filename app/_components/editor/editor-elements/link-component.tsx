@@ -49,15 +49,15 @@ const LinkComponent = ({ element }: Props) => {
       className={clsx(
         'relative m-[5px] w-full p-[2px] text-[16px] transition-all',
         {
-          '!border-blue-500': editor.selectedElement.id === element.id,
-          '!border-solid': editor.selectedElement.id === element.id,
+          '!border-blue-500': editor?.selectedElement?.id === element.id,
+          '!border-solid': editor?.selectedElement?.id === element.id,
           'border-[1px] border-dashed border-slate-300': !editor.liveMode,
         },
       )}
     >
-      {editor.selectedElement.id === element.id && !editor.liveMode && (
+      {editor?.selectedElement?.id === element.id && !editor.liveMode && (
         <Badge className="absolute -left-[1px] -top-[23px] rounded-none rounded-t-lg">
-          {editor.selectedElement.name}
+          {editor?.selectedElement?.name}
         </Badge>
       )}
       {!Array.isArray(element.content) &&
@@ -71,7 +71,7 @@ const LinkComponent = ({ element }: Props) => {
           {!Array.isArray(element.content) && element.content.innerText}
         </span>
       )}
-      {editor.selectedElement.id === element.id && !editor.liveMode && (
+      {editor?.selectedElement?.id === element.id && !editor.liveMode && (
         <div className="absolute -right-[1px] -top-[25px] rounded-none rounded-t-lg bg-primary px-2.5 py-1 text-xs font-bold !text-white">
           <Trash
             className="cursor-pointer"

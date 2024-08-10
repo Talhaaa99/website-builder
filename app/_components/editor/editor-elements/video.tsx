@@ -37,13 +37,13 @@ const VideoComponent = (props: Props) => {
       className={clsx(
         'relative m-[5px] flex w-full items-center justify-center p-[2px] text-[16px] transition-all',
         {
-          '!border-blue-500': editor.selectedElement.id === props.element.id,
-          '!border-solid': editor.selectedElement.id === props.element.id,
+          '!border-blue-500': editor?.selectedElement?.id === props.element.id,
+          '!border-solid': editor?.selectedElement?.id === props.element.id,
           'border-[1px] border-dashed border-slate-300': !editor.liveMode,
         },
       )}
     >
-      {editor.selectedElement.id === props.element.id && !editor.liveMode && (
+      {editor?.selectedElement?.id === props.element.id && !editor.liveMode && (
         <Badge className="absolute -left-[1px] -top-[23px] rounded-none rounded-t-lg">
           {editor.selectedElement.name}
         </Badge>
@@ -59,7 +59,7 @@ const VideoComponent = (props: Props) => {
         />
       )}
 
-      {editor.selectedElement.id === props.element.id && !editor.liveMode && (
+      {editor?.selectedElement?.id === props.element.id && !editor.liveMode && (
         <div className="absolute -right-[1px] -top-[25px] rounded-none rounded-t-lg bg-primary px-2.5 py-1 text-xs font-bold !text-white">
           <Trash
             className="cursor-pointer"
