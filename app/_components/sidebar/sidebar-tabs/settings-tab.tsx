@@ -8,18 +8,7 @@ import {
 } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { EditorElement, useEditorStore } from '@/zustand/editorStore';
-import { Slider } from '@/components/ui/slider';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsTrigger, TabsList } from '@/components/ui/tabs';
+import { useEditorStore } from '@/zustand/editorStore';
 
 const SettingsTab = () => {
   const { editor, updateElement } = useEditorStore();

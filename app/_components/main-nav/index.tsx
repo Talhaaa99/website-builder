@@ -106,7 +106,7 @@ const MainNav = () => {
     <TooltipProvider>
       <nav
         className={clsx(
-          'flex items-center justify-between gap-2 border-b-[1px] p-4 transition-all',
+          'flex items-center justify-between gap-2 border-b-[1px] p-4 transition-all dark:bg-slate-800',
           { '!h-0 !overflow-hidden !p-0': editor.previewMode },
         )}
       >
