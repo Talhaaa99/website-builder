@@ -13,6 +13,7 @@ import React from 'react';
 import TabList from './sidebar-tabs';
 import SettingsTab from './sidebar-tabs/settings-tab';
 import ComponentsTab from './sidebar-tabs/element-tabs';
+import TemplatesTab from './sidebar-tabs/template-tab';
 
 const Sidebar = () => {
   const { editor } = useEditorStore();
@@ -52,6 +53,15 @@ const Sidebar = () => {
                 </SheetDescription>
               </SheetHeader>
               <ComponentsTab />
+            </TabsContent>
+            <TabsContent value="Templates">
+              <SheetHeader className="p-6 text-left">
+                <SheetTitle>Templates</SheetTitle>
+                <SheetDescription>
+                  Drag these templates onto your website
+                </SheetDescription>
+              </SheetHeader>
+              <TemplatesTab />
             </TabsContent>
           </div>
         </SheetContent>

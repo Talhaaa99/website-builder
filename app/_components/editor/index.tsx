@@ -58,12 +58,12 @@ const Editor = ({ liveMode }: { liveMode?: boolean }) => {
   return (
     <div
       className={clsx(
-        'use-automation-zoom-in mr-[385px] h-full items-center overflow-scroll rounded-md bg-background transition-all',
+        'use-automation-zoom-in mr-[450px] h-full items-center overflow-scroll rounded-md bg-background transition-all',
         {
           '!mr-0 !p-0': editor.previewMode === true || editor.liveMode === true,
           '!w-[850px]': editor.device === 'Tablet',
           '!w-[420px]': editor.device === 'Mobile',
-          'w-full': editor.device === 'Desktop',
+          'w-auto': editor.device === 'Desktop',
         },
       )}
       onClick={handleClick}

@@ -17,7 +17,6 @@ const TabList = () => {
       >
         <Plus />
       </TabsTrigger>
-
       <TabsTrigger
         value="Templates"
         className="h-10 w-10 p-0 data-[state=active]:bg-muted"

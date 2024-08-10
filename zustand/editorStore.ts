@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { EditorBtns } from '@/lib/constants';
+import { EditorBtns, initialTemplates } from '@/lib/constants';
 import { v4 } from 'uuid';
 
 export type DeviceTypes = 'Desktop' | 'Mobile' | 'Tablet';
@@ -64,6 +64,8 @@ export type EditorState = {
   removePage: (id: string) => void;
   setCurrentPage: (id: string) => void;
   exportProject: () => { html: string; css: string; js: string };
+  loadTemplate: (templateId: string) => void;
+  saveAsTemplate: () => void;
 };
 
 const initialEditorState: EditorState['editor'] = {
@@ -96,19 +98,6 @@ const initialHistoryState: HistoryState = {
   currentIndex: 0,
 };
 
-const initialTemplates = [
-  {
-    id: 'template-1',
-    name: 'Portfolio',
-    pages: [{ id: 'page-1', name: 'Home', elements: [] }],
-  },
-  {
-    id: 'template-2',
-    name: 'Blog',
-    pages: [{ id: 'page-1', name: 'Home', elements: [] }],
-  },
-];
-
 export const useEditorStore = create<EditorState>((set, get) => ({
   editor: initialEditorState,
   history: {
@@ -127,31 +116,30 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       editor: { ...state.editor, previewMode },
     })),
 
-  addElement: (elementDetails: EditorElement, containerId: string) =>
+  addElement: (elementDetails: EditorElement, containerId: string) => {
     set((state) => {
       const updatedPages = state.pages.map((page) => {
         if (page.id === state.currentPageId) {
           const updatedElements = page.elements.map((el) => {
             if (el.id === containerId && el.type === '__body') {
+              // Only update the content of the existing __body component
               const newContent = [
                 ...(el.content as EditorElement[]),
-                { ...elementDetails }, // Add the new element to the existing content
+                { ...elementDetails },
               ];
-
-              console.log('Updated __body content:', newContent);
               return { ...el, content: newContent };
             }
             return el;
           });
 
-          return { ...page, elements: updatedElements }; // Ensure only one `__body` exists
+          return { ...page, elements: updatedElements };
         }
         return page;
       });
 
-      console.log('Final updated pages:', updatedPages);
       return { pages: updatedPages };
-    }),
+    });
+  },
 
   updateElement: (elementDetails) =>
     set((state) => {
@@ -361,34 +349,42 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     set((state) => {
       const template = initialTemplates.find((t) => t.id === templateId);
       if (template) {
+        // Ensure that pages and currentPageId are updated
         return {
-          pages: template.pages,
-          currentPageId: template.pages[0].id,
+          ...state,
+          pages: template.pages, // Setting the template's pages to the store
+          currentPageId: template.pages[0].id, // Set the currentPageId to the first page
         };
       } else {
         console.warn(`Template with id ${templateId} not found`);
-        return {};
+        return {}; // Return the current state if the template isn't found
       }
     }),
+
   saveAsTemplate: () => {
-    const { pages } = get();
-    const newTemplate = {
-      id: `template-${new Date().getTime()}`,
-      name: 'Custom Template',
-      pages,
-    };
-    const existingTemplates = JSON.parse(
-      localStorage.getItem('templates') || '[]',
-    );
+    try {
+      const { pages } = get();
+      const newTemplate = {
+        id: `template-${new Date().getTime()}`,
+        name: 'Custom Template',
+        pages,
+      };
+      const existingTemplates = JSON.parse(
+        localStorage.getItem('templates') || '[]',
+      );
 
-    // Add the new template to the existing templates
-    const updatedTemplates = [...existingTemplates, newTemplate];
+      // Add the new template to the existing templates
+      const updatedTemplates = [...existingTemplates, newTemplate];
 
-    // Save the updated templates array back to local storage
-    localStorage.setItem('templates', JSON.stringify(updatedTemplates));
+      // Save the updated templates array back to local storage
+      localStorage.setItem('templates', JSON.stringify(updatedTemplates));
 
-    console.log('Template saved successfully:', newTemplate);
+      console.log('Template saved successfully:', newTemplate);
+    } catch (error) {
+      console.error('Failed to save template:', error);
+    }
   },
+
   exportProject: () => {
     const { html, css, js } = get().editor;
     return { html, css, js };

@@ -1,10 +1,10 @@
 // ThemeSelector.tsx
 import { Button } from '@/components/ui/button';
-import { useEditorStore } from '@/zustand/editorStore';
+import { useGlobalStyles } from '@/context/theme-provider';
 import { MoonIcon, SunIcon } from 'lucide-react';
 
 const ThemeSelector = () => {
-  const { setTheme } = useEditorStore();
+  const { theme, toggleTheme } = useGlobalStyles();
 
   return (
     <div className="theme-selector">
@@ -12,7 +12,7 @@ const ThemeSelector = () => {
         variant={'ghost'}
         size={'icon'}
         className="hover:bg-slate-200 dark:text-white dark:hover:bg-slate-800"
-        onClick={() => setTheme('dark')}
+        onClick={toggleTheme}
       >
         <MoonIcon />
       </Button>
@@ -20,7 +20,7 @@ const ThemeSelector = () => {
         variant={'ghost'}
         size={'icon'}
         className="hover:bg-slate-200 dark:text-white dark:hover:bg-slate-800"
-        onClick={() => setTheme('light')}
+        onClick={toggleTheme}
       >
         <SunIcon />
       </Button>

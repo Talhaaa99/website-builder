@@ -42,8 +42,12 @@ const SettingsTab = () => {
     const styleSettings = e.target.id;
     const value = e.target.value;
     const styleObject = {
-      [styleSettings]: value,
-    } as EditorElement;
+      ...editor.selectedElement,
+      styles: {
+        ...editor.selectedElement.styles,
+        [styleSettings]: value,
+      },
+    };
 
     updateElement(styleObject);
   };
@@ -52,8 +56,12 @@ const SettingsTab = () => {
     const settingProperty = e.target.id;
     const value = e.target.value;
     const contentObject = {
-      [settingProperty]: value,
-    } as EditorElement;
+      ...editor.selectedElement,
+      content: {
+        ...editor.selectedElement.content,
+        [settingProperty]: value,
+      },
+    };
 
     updateElement(contentObject);
   };
@@ -130,7 +138,7 @@ const SettingsTab = () => {
           <div className="flex flex-col gap-2">
             <p className="text-muted-foreground">Font Family</p>
             <Input
-              id="DM Sans"
+              id="fontFamily"
               onChange={handleOnChanges}
               value={editor.selectedElement.styles.fontFamily}
             />
@@ -150,7 +158,7 @@ const SettingsTab = () => {
                 onValueChange={(e) =>
                   handleOnChanges({
                     target: {
-                      id: 'font-weight',
+                      id: 'fontWeight',
                       value: e,
                     },
                   })
