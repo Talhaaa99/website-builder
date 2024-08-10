@@ -4,7 +4,7 @@ import { useGlobalStyles } from '@/context/theme-provider';
 import { MoonIcon, SunIcon } from 'lucide-react';
 
 const ThemeSelector = () => {
-  const { theme, toggleTheme } = useGlobalStyles();
+  const { toggleTheme } = useGlobalStyles();
 
   return (
     <div className="theme-selector">
