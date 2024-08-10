@@ -1,3 +1,5 @@
+import { EditorElement } from '@/zustand/editorStore';
+
 export type EditorBtns =
   | 'text'
   | 'container'
@@ -510,3 +512,26 @@ export const initialTemplates = [
     ],
   },
 ];
+
+export function updateElementsRecursive(
+  elements: EditorElement[],
+  updatedElement: EditorElement,
+): EditorElement[] {
+  return elements.map((element) => {
+    if (element.id === updatedElement.id) {
+      return updatedElement;
+    }
+
+    if (Array.isArray(element.content)) {
+      return {
+        ...element,
+        content: updateElementsRecursive(
+          element.content as EditorElement[],
+          updatedElement,
+        ),
+      };
+    }
+
+    return element;
+  });
+}

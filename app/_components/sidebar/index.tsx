@@ -9,7 +9,7 @@ import {
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { useEditorStore } from '@/zustand/editorStore';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useEffect } from 'react';
 import TabList from './sidebar-tabs';
 import SettingsTab from './sidebar-tabs/settings-tab';
 import ComponentsTab from './sidebar-tabs/element-tabs';
@@ -18,9 +18,22 @@ import TemplatesTab from './sidebar-tabs/template-tab';
 const Sidebar = () => {
   const { editor } = useEditorStore();
 
+  const [activeTab, setActiveTab] = React.useState('components');
+
+  useEffect(() => {
+    if (editor.selectedElement) {
+      setActiveTab('Settings');
+    }
+  }, [editor.selectedElement]);
+
   return (
     <Sheet open={true} modal={false}>
-      <Tabs className="w-full" defaultValue="Settings">
+      <Tabs
+        className="w-full"
+        defaultValue="Components"
+        onValueChange={setActiveTab}
+        value={activeTab}
+      >
         <SheetContent
           side="right"
           className={clsx(

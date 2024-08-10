@@ -102,14 +102,14 @@ const Container = ({ element }: Props) => {
         'h-full overflow-scroll': type === '__body',
         'flex flex-col md:!flex-row': type === '2Col',
         '!border-blue-500':
-          editor.selectedElement.id === id &&
+          editor?.selectedElement?.id === id &&
           !editor.liveMode &&
-          editor.selectedElement.type !== '__body',
+          editor?.selectedElement.type !== '__body',
         '!border-4 !border-yellow-400':
-          editor.selectedElement.id === id &&
+          editor?.selectedElement?.id === id &&
           !editor.liveMode &&
-          editor.selectedElement.type === '__body',
-        '!border-solid': editor.selectedElement.id === id && !editor.liveMode,
+          editor?.selectedElement.type === '__body',
+        '!border-solid': editor?.selectedElement?.id === id && !editor.liveMode,
         'border-[1px] border-dashed border-slate-300': !editor.liveMode,
       })}
       onDrop={handleOnDrop}
@@ -122,7 +122,7 @@ const Container = ({ element }: Props) => {
         className={clsx(
           'absolute -left-[1px] -top-[23px] hidden rounded-none rounded-t-lg',
           {
-            block: editor.selectedElement.id === id && !editor.liveMode,
+            block: editor?.selectedElement?.id === id && !editor.liveMode,
           },
         )}
       >
@@ -135,7 +135,7 @@ const Container = ({ element }: Props) => {
           <Recursive key={childElement.id} element={childElement} />
         ))}
 
-      {editor.selectedElement.id === id &&
+      {editor?.selectedElement?.id === id &&
         !editor.liveMode &&
         editor.selectedElement.type !== '__body' && (
           <div className="absolute -right-[1px] -top-[25px] rounded-none rounded-t-lg bg-primary px-2.5 py-1 text-xs font-bold">

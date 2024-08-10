@@ -1,5 +1,9 @@
 import { create } from 'zustand';
-import { EditorBtns, initialTemplates } from '@/lib/constants';
+import {
+  EditorBtns,
+  initialTemplates,
+  updateElementsRecursive,
+} from '@/lib/constants';
 import { v4 } from 'uuid';
 
 export type DeviceTypes = 'Desktop' | 'Mobile' | 'Tablet';
@@ -17,7 +21,7 @@ export type EditorElement = {
 export type Editor = {
   liveMode: boolean;
   elements: EditorElement[];
-  selectedElement: EditorElement;
+  selectedElement: EditorElement | null;
   device: DeviceTypes;
   previewMode: boolean;
   html: string;
@@ -51,7 +55,6 @@ export type EditorState = {
   setDevice: (device: DeviceTypes) => void;
   setPreviewMode: (previewMode: boolean) => void;
   addElement: (elementDetails: EditorElement, containerId: string) => void;
-  updateElement: (elementDetails: EditorElement) => void;
   deleteElement: (elementId: string) => void;
   changeClickedElement: (elementDetails: EditorElement) => void;
   toggleLiveMode: (value?: boolean) => void;
@@ -66,6 +69,8 @@ export type EditorState = {
   exportProject: () => { html: string; css: string; js: string };
   loadTemplate: (templateId: string) => void;
   saveAsTemplate: () => void;
+  updateElement: (updatedElement: Partial<EditorElement>) => void;
+  updateElementInPage: (element: EditorElement) => void;
 };
 
 const initialEditorState: EditorState['editor'] = {
@@ -141,58 +146,6 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     });
   },
 
-  updateElement: (elementDetails) =>
-    set((state) => {
-      const updateAnElement = (
-        editorArray: EditorElement[],
-        elementDetails: EditorElement,
-      ): EditorElement[] => {
-        return editorArray.map((item) => {
-          if (item.id === elementDetails.id) {
-            return { ...item, ...elementDetails };
-          } else if (item.content && Array.isArray(item.content)) {
-            return {
-              ...item,
-              content: updateAnElement(item.content, elementDetails),
-            };
-          }
-          return item;
-        });
-      };
-
-      const updatedElements = updateAnElement(
-        state.editor.elements,
-        elementDetails,
-      );
-
-      const updatedHistory = [
-        ...state.history.history.slice(0, state.history.currentIndex + 1),
-        { ...state.editor, elements: updatedElements },
-      ];
-
-      return {
-        editor: {
-          ...state.editor,
-          elements: updatedElements,
-          selectedElement:
-            state.editor.selectedElement.id === elementDetails.id
-              ? elementDetails
-              : {
-                  id: '',
-                  content: [],
-                  name: '',
-                  styles: {},
-                  type: null,
-                },
-        },
-        history: {
-          ...state.history,
-          history: updatedHistory,
-          currentIndex: updatedHistory.length - 1,
-        },
-      };
-    }),
-
   deleteElement: (elementId: string) =>
     set((state) => {
       const deleteRecursive = (elements: EditorElement[]): EditorElement[] => {
@@ -219,25 +172,52 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       return { pages: updatedPages };
     }),
 
-  changeClickedElement: (elementDetails) =>
-    set((state) => {
-      const updatedHistory = [
-        ...state.history.history.slice(0, state.history.currentIndex + 1),
-        { ...state.editor, selectedElement: elementDetails },
-      ];
+  changeClickedElement: (element: EditorElement) => {
+    set((state) => ({
+      editor: {
+        ...state.editor,
+        selectedElement: element,
+      },
+    }));
+  },
 
-      return {
-        editor: {
-          ...state.editor,
-          selectedElement: elementDetails,
-        },
-        history: {
-          ...state.history,
-          history: updatedHistory,
-          currentIndex: updatedHistory.length - 1,
-        },
-      };
-    }),
+  updateElement: (updatedElement: Partial<EditorElement>) => {
+    const state = get();
+    const selectedElement = state.editor.selectedElement;
+
+    if (!selectedElement) return;
+
+    const updatedSelectedElement = {
+      ...selectedElement,
+      ...updatedElement,
+    };
+
+    // Update the selected element in the editor state
+    set({
+      editor: {
+        ...state.editor,
+        selectedElement: updatedSelectedElement,
+      },
+    });
+
+    // Update the element in the main elements array
+    get().updateElementInPage(updatedSelectedElement);
+  },
+
+  updateElementInPage: (updatedElement: EditorElement) => {
+    const state = get();
+    const updatedPages = state.pages.map((page) => {
+      if (page.id === state.currentPageId) {
+        return {
+          ...page,
+          elements: updateElementsRecursive(page.elements, updatedElement),
+        };
+      }
+      return page;
+    });
+
+    set({ pages: updatedPages });
+  },
 
   toggleLiveMode: (value) =>
     set((state) => ({

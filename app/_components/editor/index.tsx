@@ -40,7 +40,9 @@ const Editor = ({ liveMode }: { liveMode?: boolean }) => {
   ]);
 
   const handleClick = () => {
-    changeClickedElement(editor.selectedElement);
+    if (editor.selectedElement) {
+      changeClickedElement(editor.selectedElement);
+    }
   };
 
   const handleUnpreview = () => {
